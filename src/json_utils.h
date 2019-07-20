@@ -5,6 +5,10 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+//#include <armadillo>
+#include "integral_utils.h"
+
+#define VERBOSE 0
 
 struct MembCarrier;
 class Json_utils{

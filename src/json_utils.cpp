@@ -36,7 +36,7 @@ MembCarrier Json_utils::JSONLoading(std::string& filename){
     json_spirit::read(buffer,value); // Setting mValue object from buffer content.
     const std::string fileText(buffer.str()); // needs c_str() if printed using stdout.
     JSONText.close();
-    std::cout << fileText.c_str() << std::endl;
+    if (VERBOSE > 0) std::cout << fileText.c_str() << std::endl;
 
     // Reading from json file
     //double precision
@@ -59,8 +59,10 @@ MembCarrier Json_utils::JSONLoading(std::string& filename){
         container[i] = array_val.get_array().at(i).get_real();
     }
 
-    std::cout << "Size of input file: " << getSize("params.json") << "\n";
-
+    if (VERBOSE > 0){
+        std::cout << "Size of input file: " << getSize("params.json") << "\n";
+    }
+    
     //Collecting the json variables to instantiate param object
     double U = U_val.get_real(); double V = V_val.get_real();
     double beta = beta_val.get_real(); double temperature = 1.0/beta;

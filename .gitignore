@@ -1,3 +1,8 @@
 obj
 json_test.cpp
 *.out
+*.dat
+*.a
+.*
+test*.cpp
+

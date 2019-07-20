@@ -2,68 +2,36 @@
 
 using namespace std;
 
-template<typename T> vector<T> GenerateVecT(unsigned int numOfEls, double min, double max);
-template<> vector< complex<double> > GenerateVecT(unsigned int numOfEls, double min, double max);
+std::complex<double> z(int N_tau, double beta, int n, int l); // Function used to compute Matsubara frequencies
 
 int main(){
     
     string filename("params.json");
     Json_utils Json_utilsObj;
-    HubbardM::HubbardC param_(Json_utilsObj, filename); // Instantiating
+    HubbardM::HubbardC param_(Json_utilsObj, filename, &z); // Instantiating
 
     //cout << typeid(U).name() << "  " << N_it << "  " << V << endl;
 
-    cout << param_ << endl;
+    if (VERBOSE > 0){
+        cout << param_ << endl;
+    }
 
     FFT FFTObj;
-    vector<double> test_out(30); vector< complex<double> > test_out_inv(30);
-    vector< complex<double> > test_in = GenerateVecT< complex<double> >(30,0.5,3.0);
-    for (size_t i=0; i<test_in.size(); i++){
-        cout << test_in[i] << endl;
-    }
+    int N = param_._N_tau;
 
-    FFTObj.fft_w2t(param_,test_in,test_out);
+    HubbardM::Integral1D testIntegral1D(0.4,0.1+im*0.3); HubbardM::Integral2D testIntegral2D(0.3,0.4,0.1+im*0.3);
+    HubbardM::Integrals testIntegrals1D(&testIntegral1D); HubbardM::Integrals testIntegrals2D(&testIntegral2D);
 
-    for (size_t i=0; i<test_out.size(); i++){
-        cout << test_out[i] << endl;
-    }
-
-    FFTObj.fft_t2w(param_,test_out,test_out_inv); // Should give back test_in.
-
-    for (size_t i=0; i<test_out_inv.size(); i++){
-        cout << test_out_inv[i] << endl;
-    }
+    HubbardM::Hubbard HubbardObj;
+    arma::Mat< complex<double> > matVal = HubbardObj.initGk(param_,testIntegrals1D,testIntegrals1D,4,4);
+    cout << "matVal: " << matVal << endl;
+    arma::Mat< complex<double> > SE = arma::randu< arma::Mat< complex<double> > >(2,2);
+    arma::Mat< complex<double> > matVal2 = HubbardObj.Gk(param_,testIntegrals1D,testIntegrals1D,4,4,SE);
+    cout << "matVal2: " << matVal2 << endl;
 
     return 0;
 }
 
-template<typename T> 
-vector<T> GenerateVecT(unsigned int numOfEls, double min, double max){
-    vector<T> vecValues;
-    srand(time(NULL)); // Setting random number generator.
-    unsigned int i = 0;
-    T randVal = 0;
-    while(i < numOfEls){
-        double randVal_temp = (double)rand() / RAND_MAX;
-        randVal = (T)( min + randVal_temp*(max - min) );
-        vecValues.push_back(randVal);
-        i++;
-    }
-    return vecValues;
-}
-
-template<>
-vector< complex<double> > GenerateVecT(unsigned int numOfEls, double min, double max){
-    vector< complex<double> > vecValues;
-    srand(time(NULL)); // Setting random number generator.
-    unsigned int i = 0;
-    complex<double> randVal(0.0,0.0);
-    while(i < numOfEls){
-        double randVal_temp_im = (double)rand() / RAND_MAX;
-        double randVal_temp_re = (double)rand() / RAND_MAX;
-        randVal = complex<double>( min + randVal_temp_re*(max - min), min + randVal_temp_im*(max - min) );
-        vecValues.push_back(randVal);
-        i++;
-    }
-    return vecValues;
+std::complex<double> z(int N_tau, double beta, int n, int l){
+    return im*(2.0*((double)n + 1.0 + (double)l*(double)N_tau))*M_PI/beta;
 }

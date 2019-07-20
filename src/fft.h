@@ -8,7 +8,10 @@
 class FFT{
     public:
         void fft_t2w(HubbardM::HubbardC parm_, std::vector<double> &y, std::vector<std::complex<double> > &z);
+        void fft_t2w_notc(HubbardM::HubbardC parm_, std::vector<double> &y, std::vector<std::complex<double> > &z);
+        void fft_t2w_G(HubbardM::HubbardC parm_, std::vector<double> &y, std::vector<std::complex<double> > &z);
         void fft_w2t(HubbardM::HubbardC parm_, std::vector<std::complex<double> > &z, std::vector<double> &y);
+        void fft_w2t_notc(HubbardM::HubbardC parm_, std::vector<std::complex<double> > &z, std::vector<double> &y);
         template<typename T> std::vector<T> GenerateVecT(unsigned int numOfEls, int min, int max);
 };
 

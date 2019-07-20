@@ -27,7 +27,9 @@ Param::Param(Json_utils json_utilsObj, std::string filename){
 }
 
 Param::~Param(){
-    std::cout << "param instance destructed" << std::endl;
+    if (VERBOSE > 0){
+        std::cout << "param instance destructed" << std::endl;
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Param& param_){
