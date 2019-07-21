@@ -10,8 +10,8 @@ PROG=PiTon
 
 all: $(PROG)
 
-$(PROG): $(OBJ)/main.o $(OBJ)/json_utils.o $(OBJ)/fft.o $(OBJ)/param.o $(OBJ)/Hubbard.o $(OBJ)/integral_utils.o
-	$(CXX) $(OBJ)/main.o $(OBJ)/json_utils.o $(OBJ)/fft.o $(OBJ)/param.o $(OBJ)/Hubbard.o $(OBJ)/integral_utils.o $(CXXFLAGS) -o main.out
+$(PROG): $(OBJ)/main.o $(OBJ)/json_utils.o $(OBJ)/fft.o $(OBJ)/param.o $(OBJ)/Hubbard.o $(OBJ)/integral_utils.o $(OBJ)/HubbardSelfCon.o
+	$(CXX) $(OBJ)/main.o $(OBJ)/json_utils.o $(OBJ)/fft.o $(OBJ)/param.o $(OBJ)/Hubbard.o $(OBJ)/integral_utils.o $(OBJ)/HubbardSelfCon.o $(CXXFLAGS) -o main.out
 
 $(OBJ)/main.o: $(SRC)/Main.cpp
 	$(CXX) -c -I$(INC) $(SRC)/Main.cpp -o $(OBJ)/main.o
@@ -30,6 +30,9 @@ $(OBJ)/Hubbard.o: $(SRC)/Hubbard.cpp
 
 $(OBJ)/integral_utils.o: $(SRC)/integral_utils.cpp
 	$(CXX) -c -I$(INC) $(SRC)/integral_utils.cpp -o $(OBJ)/integral_utils.o
+
+$(OBJ)/HubbardSelfCon.o: $(SRC)/HubbardSelfCon.cpp
+	$(CXX) -c -I$(INC) $(SRC)/HubbardSelfCon.cpp -o $(OBJ)/HubbardSelfCon.o
 clean:
 	rm $(OBJ)/* $(PWD)/main.out
 

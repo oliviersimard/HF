@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <functional>
  
 int int_sorter( const void *first_arg, const void *second_arg )
 {
@@ -117,5 +118,12 @@ int main()
         printf ( "%d\n" ,array[ i ] );
     }
     delete AscendSorterPtr;
- 
+
+    /* Lambda expressions */
+    int aa = 5; int bb = 9;
+    std::function<int(int)> functPtrRef; int (*functPtrVal)(int,int);
+    functPtrRef = [&aa,&bb](int cc){ aa += bb; return cc *= aa; };
+    functPtrVal = [](int aa, int bb){ return aa*bb; };
+    std::cout << functPtrRef(4) << std::endl;
+    std::cout << functPtrVal(3,4) << std::endl;
 }

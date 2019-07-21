@@ -178,8 +178,8 @@ double Hubbard::epsilonk(Integrals kk) throw(){
 arma::Mat< std::complex<double> > Hubbard::initGk(HubbardC model, Integrals kk, Integrals qq, int n, int l) throw(){
     arma::Mat< std::complex<double> > tmpMat = model.II_;
     double mu = model._U/2.0; // Half-filling
-    tmpMat(0,0) = 1.0/(model.callFunctor(model._N_tau,model._beta,n,l) - epsilonk(kk+qq) - mu); // Diagonal up part
-    tmpMat(1,1) = 1.0/(model.callFunctor(model._N_tau,model._beta,n,l) - epsilonk(kk+qq) + mu); // Diagonal down part
+    tmpMat(0,0) = 1.0/(model.callFunctor(model._N_tau,model._beta,n,l) - epsilonk(kk+qq) - mu) - 1.0/(model.callFunctor(model._N_tau,model._beta,n,l)); // Diagonal up part
+    tmpMat(1,1) = 1.0/(model.callFunctor(model._N_tau,model._beta,n,l) - epsilonk(kk+qq) + mu) - 1.0/(model.callFunctor(model._N_tau,model._beta,n,l)); // Diagonal down part
     tmpMat(0,1) = tmpMat(1,0) = 0.0+im*0.0;
 
     return tmpMat;
@@ -188,12 +188,12 @@ arma::Mat< std::complex<double> > Hubbard::initGk(HubbardC model, Integrals kk, 
 arma::Mat< std::complex<double> > Hubbard::Gk(HubbardC model, Integrals kk, Integrals qq, int n, int l, arma::Mat< std::complex<double> > SE) throw(){
     arma::Mat< std::complex<double> > tmpMat = model.ZEROS_;
     double mu = model._U/2.0; // Half-filling
-    tmpMat += arma::inv(1.0/model.callFunctor(model._N_tau,model._beta,n,l)*model.II_ + mu*model.II_ - epsilonk(kk+qq)*model.II_ - SE);
+    tmpMat += arma::inv(1.0/model.callFunctor(model._N_tau,model._beta,n,l)*model.II_ + mu*model.II_ - epsilonk(kk+qq)*model.II_ - SE) - 1.0/(model.callFunctor(model._N_tau,model._beta,n,l))*model.II_;
     
     return tmpMat;
 }
 
-arma::Mat< std::complex<double> > Hubbard::frec(arma::Mat< std::complex<double> > (*funct)(int,int), int n, int l) throw(){
+arma::Mat< std::complex<double> > Hubbard::frec(std::function< arma::Mat< std::complex<double> >(int,int) > funct, int n, int l) throw(){
     this->_stop = l;
     if (this->_stop == 0){
         return funct(n,0);
@@ -202,11 +202,4 @@ arma::Mat< std::complex<double> > Hubbard::frec(arma::Mat< std::complex<double> 
         this->_stop -= 1;
         return funct(n,l) + frec(funct,n,l-1);
     }
-}
-
-/* HubbardSelfCon */
-
-template<typename T, typename C, typename Q>
-arma::Mat< std::complex<double> > HubbardSelfCon<T,C,Q>::tmpSelf(functorStruct<T,C,Q> functObj, HubbardC model, int ii, int ll, arma::Mat< std::complex<double> > SE) throw(){
-    
 }

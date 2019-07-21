@@ -3,6 +3,7 @@
 
 #include "param.h"
 #include <exception>
+#include <functional>
 
 namespace HubbardM{
 
@@ -72,17 +73,10 @@ namespace HubbardM{
             arma::Mat< std::complex<double> >& swap(arma::Mat< std::complex<double> >& M);
             arma::Mat< std::complex<double> > initGk(HubbardC model, Integrals kk, Integrals qq, int n, int l) throw();
             arma::Mat< std::complex<double> > Gk(HubbardC model, Integrals kk, Integrals qq, int n, int l, arma::Mat< std::complex<double> > SE) throw();
-            arma::Mat< std::complex<double> > frec(arma::Mat< std::complex<double> > (*funct)(int,int), int n, int l) throw();
+            arma::Mat< std::complex<double> > frec(std::function< arma::Mat< std::complex<double> >(int,int) > funct, int n, int l) throw();
         private:
             int _stop = 0;
     };
-
-    template<typename T, typename C, typename Q>
-    class HubbardSelfCon{
-        public:
-            arma::Mat< std::complex<double> > tmpSelf(functorStruct<T,C,Q> functObj, HubbardC model, int ii, int ll, arma::Mat< std::complex<double> > SE) throw();
-    };
-
 }
 
 
