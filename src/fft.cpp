@@ -133,12 +133,12 @@ void FFT::fft_w2t_notc(HubbardM::HubbardC param, std::vector<std::complex<double
 /*----------------------------------------------------------------------------
     This subroutine computes the Fourier transformation
 
-    y(j) = 1/beta*sum_{k=0}^{n-1} z(k)*exp(-i*w_{k}*tau_{j}).
-    (j = 0, 1,..., n)
+    y(j) = 1/beta*sum_{k=0}^{N-1} z(k)*exp(-i*w_{k}*tau_{j}).
+    (j = 0, 1,..., N)
 
-    tau_{j} = j*dtau     (dtau = beta/n)
+    tau_{j} = j*dtau     (dtau = beta/N)
 
-    w_{k} = (2*k-n+1)*pi/beta
+    w_{k} = (2*k+1)*pi/beta
 ----------------------------------------------------------------------------*/
 {
   std::complex<double>* in=new std::complex<double> [param._N_tau];
@@ -163,19 +163,5 @@ void FFT::fft_w2t_notc(HubbardM::HubbardC param, std::vector<std::complex<double
   delete [] in;
   delete [] out;
   fftw_destroy_plan(p);
-}
-
-template<typename T> 
-std::vector<T> FFT::GenerateVecT(unsigned int numOfEls, int min, int max){
-    std::vector<T> vecValues;
-    std::srand(std::time(NULL)); // Setting random number generator.
-    unsigned int i = 0;
-    T randVal = 0;
-    while(i < numOfEls){
-        randVal = (T)( min + rand() % ((max+1) - min) );
-        vecValues.push_back(randVal);
-        i++;
-    }
-    return vecValues;
 }
 

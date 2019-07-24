@@ -15,6 +15,20 @@ class FFT{
         template<typename T> std::vector<T> GenerateVecT(unsigned int numOfEls, int min, int max);
 };
 
+template<typename T> 
+std::vector<T> FFT::GenerateVecT(unsigned int numOfEls, int min, int max){
+    std::vector<T> vecValues;
+    std::srand(std::time(NULL)); // Setting random number generator.
+    unsigned int i = 0;
+    T randVal = 0;
+    while(i < numOfEls){
+        randVal = (T)( min + rand() % ((max+1) - min) );
+        vecValues.push_back(randVal);
+        i++;
+    }
+    return vecValues;
+}
+
 #ifdef GENERAL
 std::ostream& output = std::cout << "\n\n" << "Chose the general Fourier transform option." << std::endl;
 
