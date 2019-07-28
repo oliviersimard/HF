@@ -6,3 +6,6 @@ json_test.cpp
 .*
 test*.cpp
 build
+
+cmake-build-debug
+test/build

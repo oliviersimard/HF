@@ -1,3 +1,0 @@
-file(REMOVE_RECURSE
-  "libOWN_LIBRARY.a"
-)

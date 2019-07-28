@@ -1,31 +1,63 @@
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.02 FATAL_ERROR)
 
 project(HubbardTests)
 
 # important for the use of tuples
 SET(CMAKE_CXX_FLAGS "-std=c++0x")
 
-set(YOUR_DIRECTORY "$ENV{HOME}/include")
-set(YOUR_LIB_DIRECTORY "$ENV{HOME}/lib")
+set(LIBRARIES_CUSTOM fftw3 armadillo json_spirit)
 
-#Can manually add the sources using the set command as follows:
-#set(SOURCES src/Hubbard.cpp)
+set(SOURCES_COMMON
+        src/fft.cpp src/Hubbard.cpp
+        src/HubbardSelfCon.cpp
+        src/json_utils.cpp src/param.cpp)
 
-#However, the file(GLOB...) allows for wildcard additions:
-file(GLOB YOUR_LIBRARIES "${YOUR_LIB_DIRECTORY}/*json*.a")
-file(GLOB SOURCES "src/*.cpp" "${YOUR_DIRECTORY}/*.h" ${YOUR_LIBRARIES})
-#file(GLOB YOUR_LIBRARIES "${YOUR_LIB_DIRECTORY}/*json*.a")
-set(LIBRARIES_CUSTOM fftw3 armadillo)
+set(SOURCES_HF hartree2DSure.cpp ${SOURCES_COMMON})
+set(SOURCES_MAIN src/Main.cpp ${SOURCES_COMMON})
 
-add_executable(runTestsHubbard.a ${SOURCES})
+#------Executables
+add_executable(HF ${SOURCES_HF})
+target_link_libraries(HF ${LIBRARIES_CUSTOM})
+add_executable(MAIN ${SOURCES_MAIN})
+target_link_libraries(MAIN ${LIBRARIES_CUSTOM})
 
-# Locate GTest
-find_package(GTest REQUIRED)
 
-if (GTest_FOUND)
-    #Bring the headers into the project
-    include_directories(${GTEST_INCLUDE_DIRS} src ${YOUR_DIRECTORY})
-    # Link runTests with what we want to test and the GTest and pthread library
-    message(${GTEST_LIBRARIES})
-    target_link_libraries(runTestsHubbard.a ${GTEST_LIBRARIES} ${YOUR_LIBRARIES} pthread ${LIBRARIES_CUSTOM})
-endif (GTest_FOUND) 
+# Taken from github google test repo
+
+# Download and unpack googletest at configure time
+configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+        RESULT_VARIABLE result
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+if(result)
+    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+endif()
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+        RESULT_VARIABLE result
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+if(result)
+    message(FATAL_ERROR "Build step for googletest failed: ${result}")
+endif()
+
+# Prevent overriding the parent project's compiler/linker
+# settings on Windows
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+# Add googletest directly to our build. This defines
+# the gtest and gtest_main targets.
+add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+        ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
+        EXCLUDE_FROM_ALL)
+
+# The gtest/gtest_main targets carry header search path
+# dependencies automatically when using CMake 2.8.11 or
+# later. Otherwise we have to add them here ourselves.
+if (CMAKE_VERSION VERSION_LESS 2.8.11)
+    include_directories("${gtest_SOURCE_DIR}/include")
+endif()
+
+# Now simply link against gtest or gtest_main as needed. Eg
+enable_testing()
+add_executable(hubbard_test test/Hubbard_unit_tests.cpp ${SOURCES_COMMON})
+target_link_libraries(hubbard_test ${LIBRARIES_CUSTOM} gtest_main gtest)
+add_test(NAME hubbard_test COMMAND ./hubbard_test)
