@@ -1,1 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/c++  -std=c++0x -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/runTestsHubbard.a.dir/Hubbard_unit_tests.cpp.o  -o runTestsHubbard.a /usr/local/lib/libgtest.a /Users/oliviersimard/lib/libjson_spirit.a -lpthread -lfftw3 -larmadillo -ljson_spirit 
